@@ -24,7 +24,6 @@ message_replies = {'hello bot': ['Hi!', 'Hello!', 'Waddup'], '/test': 'test', '/
 
 @app.route('/', method='POST')
 def listener():
-
 	global botid, groupid, botuserid
 
 	print(botid, " ", groupid, " ", botuserid)
@@ -33,7 +32,7 @@ def listener():
 	print(message.user_id, "-", message)
 	if message.user_id != botuserid:
 		if message.text in message_replies:
-			if (callable(message_replies[message.text])):
+			if callable(message_replies[message.text]):
 				bot.post(message_replies[message.text]())
 			elif type(message_replies[message.text]) is list:
 				bot.post(random.choice(message_replies[message.text]))
@@ -41,7 +40,7 @@ def listener():
 				bot.post(message_replies[message.text])
 	return message
 
-def get_last_message():
+def get_last_message(groupid):
 	groups = Group.list()
 	for x in range(len(groups)):
 		group = groups[x]
@@ -49,7 +48,7 @@ def get_last_message():
 			return group, group.messages().newest
 	return group, group.messages().newest
 
-def get_bot():
+def get_bot(botid):
 	bots = Bot.list()
 	for x in range(len(bots)):
 		bot = bots[x]
