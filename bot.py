@@ -22,7 +22,7 @@ def runcommand(message):
 	command = message.strip()
 	process = subprocess.Popen(command.split()[1:], stdout=subprocess.PIPE)
 	output, error = process.communicate()
-	return str(output)
+	return str(output.replace("b'", "").replace("'", "").replace("\n", ""))[0:999]
 
 message_replies = {'hello bot': ['Hi!', 'Hello!', 'Waddup'], '/test': 'test', '/command': runcommand}
 
