@@ -4,6 +4,7 @@ import sys
 import configparser
 import random
 import argparse
+import subprocess
 
 app = Bottle()
 
@@ -17,10 +18,13 @@ botid = config['BOT']['id']
 groupid = config['GROUP']['id']
 botuserid = config['BOT']['user_id']
 
-def example():
-	return "HELLO WORLD"
+def runcommand(message):
+	command = message.strip()
+	process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+	output, error = process.communicate()
+	return output
 
-message_replies = {'hello bot': ['Hi!', 'Hello!', 'Waddup'], '/test': 'test', '/function': example}
+message_replies = {'hello bot': ['Hi!', 'Hello!', 'Waddup'], '/test': 'test', '/command': runcommand}
 
 @app.route('/', method='POST')
 def listener():
@@ -33,7 +37,7 @@ def listener():
 	if message.user_id != botuserid:
 		if message.text in message_replies:
 			if callable(message_replies[message.text]):
-				bot.post(message_replies[message.text]())
+				bot.post(message_replies[message.text](message.text))
 			elif type(message_replies[message.text]) is list:
 				bot.post(random.choice(message_replies[message.text]))
 			else:
